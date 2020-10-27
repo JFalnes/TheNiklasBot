@@ -20,15 +20,16 @@ import json
 from gtts import gTTS
 
 load_dotenv()
+# change these variables in your .env file to point to the right tokens or paths
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 REDDIT_ID = os.getenv('REDDIT_ID')
 REDDIT_SECRET = os.getenv('REDDIT_SECRET')
+FOLDER_PATH = os.getenv('FOLDER_PATH')
+FFMPEG_PATH = os.getenv('FFPMEG_PATH')
 
-# change this variable to whatever your download folder for the bot will be
-folder = r'/home/pi/Desktop/Niklas-Bot/NiklasDL'
-# change this variable to your ffmpeg installation directory
-ffmpeg_ex = r'C:\ffmpeg\bin\ffmpeg.exe'
+folder = FOLDER_PATH
+ffmpeg_ex = FFMPEG_PATH
 PREFIX = '!'
 VERSION = '1.0'
 CHANGELOG = f'Version {VERSION} contains multiple bugfixes, QoL changes and some new features:\n' \
@@ -44,13 +45,16 @@ r = praw.Reddit(client_id=REDDIT_ID,
                 client_secret=REDDIT_SECRET,
                 user_agent='<console:myFirstBot:1.0 (by /u/user)>', username='', password="")
 
+# phrases the bot will say when posting a meme from reddit, change as you want
 list_of_stealing = ['aggressively stolen from', 'willfully given to Niklas by', 'forcefully taken from',
                     'confiscated from', 'confiscated, for the good of the realm from']
 
+# change or update this list to what you want
 sub_list = ['memes', 'blackpeopletwitter', 'whitepeopletwitter', 'meirl', 'WholesomeMemes',
             'prequelmemes', 'lotrmemes', 'historymemes', 'comedycemetery', 'comedyheaven']
 
 
+# function for retrieving posts from reddit
 def reddit_meme():
     s = random.choice(sub_list)
     sub = r.subreddit(s)
@@ -62,30 +66,6 @@ def reddit_meme():
                 return f'Title: **{posts.title}**\n' \
                        f'{posts.url} \n' \
                        f' {random.choice(list_of_stealing)} _/r/{sub}_'
-
-
-# Suppress noise about console usage from errors
-youtube_dl.utils.bug_reports_message = lambda: ''
-
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'outtmpl': f'{folder}/%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': False,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0'  # bind to ipv4 since ipv6 addresses cause issues sometimes
-}
-
-ffmpeg_options = {
-    'options': '-vn'
-}
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 
 def delete_DL():
@@ -101,6 +81,29 @@ def delete_DL():
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
             print('Cleaned')
             time.sleep(900)
+
+
+youtube_dl.utils.bug_reports_message = lambda: ''
+
+ytdl_format_options = {
+    'format': 'bestaudio/best',
+    'outtmpl': f'{folder}/%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'restrictfilenames': True,
+    'noplaylist': False,
+    'nocheckcertificate': True,
+    'ignoreerrors': False,
+    'logtostderr': False,
+    'quiet': True,
+    'no_warnings': True,
+    'default_search': 'auto',
+    'source_address': '0.0.0.0'
+}
+
+ffmpeg_options = {
+    'options': '-vn'
+}
+
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 
 class YTDLSource(discord.PCMVolumeTransformer):
@@ -160,7 +163,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def text(self, ctx, *, query):
-        """Plays a file from the local filesystem"""
+        """Text to speech, output in channel user is in"""
         tts = gTTS(text=query, lang='en')
         tts.save('tts.mp3')
         source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(executable=ffmpeg_ex,
@@ -169,7 +172,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def textjoke(self, ctx):
-        """Plays a file from the local filesystem"""
+        """Uses pyjokes library to create a text to speech file, and plays in channel user is in"""
         joke = pyjokes.get_joke()
 
         tts = gTTS(text=joke, lang='en')
@@ -321,6 +324,7 @@ class misc(commands.Cog):
     @bot.command(description='Cleans the chat')
     @commands.has_permissions(administrator=True)
     async def clean(self, ctx, limit: int):
+        """method for cleaning chat, only administrator can use this"""
 
         await ctx.message.channel.purge(limit=limit)
         await ctx.channel.send('Cleared by {}'.format(ctx.author.mention))
@@ -333,6 +337,7 @@ class misc(commands.Cog):
 
     @commands.command()
     async def slap(self, ctx):
+        """Slaps the specified user"""
         try:
             user = ctx.message.mentions[0]
 
@@ -340,7 +345,7 @@ class misc(commands.Cog):
                            f'https://tenor.com/view/amanda-bynes-slap-gif-4079563')
         except:
             author = ctx.message.author
-            await ctx.send(f'{author.mention} YOU GOTTA DO !SLAP @USERNAME YOU\n '
+            await ctx.send(f'{author.mention} YOU GOTTA DO !SLAP @USERNAME \n '
                            f'https://tenor.com/view/amanda-bynes-slap-gif-4079563')
 
     @commands.command()
@@ -382,9 +387,8 @@ bot = commands.Bot(command_prefix=commands.when_mentioned_or("!"),
 
 @bot.event
 async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
+    print(f'Logged in as {bot.user.name}')
+    print(f'Bot ID: {bot.user.id}')
     print('------')
     activity = discord.Game(name=f"!help, version {VERSION}")
     await bot.change_presence(status=discord.Status.online, activity=activity)
@@ -392,8 +396,9 @@ async def on_ready():
 
 t1 = threading.Thread(target=delete_DL)
 t1.start()
-bot.add_cog(dnd(bot))
 
+# if a new class for commands is created, it needs to be added here so it can be recognised
+bot.add_cog(dnd(bot))
 bot.add_cog(misc(bot))
 bot.add_cog(Funny(bot))
 bot.add_cog(Reddit(bot))
