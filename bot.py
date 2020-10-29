@@ -54,6 +54,24 @@ sub_list = ['memes', 'blackpeopletwitter', 'whitepeopletwitter', 'meirl', 'Whole
             'prequelmemes', 'lotrmemes', 'historymemes', 'comedycemetery', 'comedyheaven']
 
 
+def covid_api():
+    a = requests.get('https://api.covid19api.com/summary')
+    p = json.loads(a.text)
+    s = json.dumps(p)
+
+    for k, v in p.items():
+        loc = 'Global'
+        if k == loc:
+            stats = (f'Coronavirus Statistics for {loc}: \n' +
+                     'Total Cases: ' + str(v['TotalConfirmed']) + '\n' +
+                     'New Cases: ' + str(v['NewConfirmed']) + '\n' +
+                     'Total Deaths: ' + str(v['TotalDeaths']) + '\n' +
+                     'New Deaths: ' + str(v['NewDeaths']) + '\n' +
+                     'Data Collected from https://covid19api.com/\n' + 'Stay Safe'
+                     )
+            return stats
+
+
 # function for retrieving posts from reddit
 def reddit_meme():
     s = random.choice(sub_list)
@@ -66,6 +84,17 @@ def reddit_meme():
                 return f'Title: **{posts.title}**\n' \
                        f'{posts.url} \n' \
                        f' {random.choice(list_of_stealing)} _/r/{sub}_'
+
+
+def facts():
+    URL = 'https://uselessfacts.jsph.pl/random.json?language=en'
+
+    r = requests.get(URL).json()
+    for key, value in r.items():
+        if key == 'text':
+            fact = f'{value}\n' \
+                   f'Facts collected from https://uselessfacts.jsph.pl/ !'
+            return fact
 
 
 def delete_DL():
@@ -272,6 +301,9 @@ class Funny(commands.Cog):
         time.sleep(1)
         await ctx.send(f'The correct number was {random.choice(range(1, 10))}')
 
+    @commands.command(description='Displays a random fact!')
+    async def facts(self, ctx):
+        await ctx.send(facts())
 
 class dnd(commands.Cog):
     def __init(self, bot):
@@ -350,21 +382,8 @@ class misc(commands.Cog):
 
     @commands.command()
     async def covid(self, ctx):
-        a = requests.get('https://api.covid19api.com/summary')
-        p = json.loads(a.text)
-        s = json.dumps(p)
 
-        for k, v in p.items():
-            loc = 'Global'
-            if k == loc:
-                stats = (f'Coronavirus Statistics for {loc}: \n' +
-                         'Total Cases: ' + str(v['TotalConfirmed']) + '\n' +
-                         'New Cases: ' + str(v['NewConfirmed']) + '\n' +
-                         'Total Deaths: ' + str(v['TotalDeaths']) + '\n' +
-                         'New Deaths: ' + str(v['NewDeaths']) + '\n' +
-                         'Data Collected from https://covid19api.com/\n' + 'Stay Safe'
-                         )
-                await ctx.send(stats)
+        await ctx.send(covid_api())
 
     @commands.command()
     async def week(self, ctx):
