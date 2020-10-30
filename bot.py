@@ -26,7 +26,7 @@ GUILD = os.getenv('DISCORD_GUILD')
 REDDIT_ID = os.getenv('REDDIT_ID')
 REDDIT_SECRET = os.getenv('REDDIT_SECRET')
 FOLDER_PATH = os.getenv('FOLDER_PATH')
-FFMPEG_PATH = os.getenv('FFPMEG_PATH')
+FFMPEG_PATH = os.getenv('FFMPEG_PATH')
 
 folder = FOLDER_PATH
 ffmpeg_ex = FFMPEG_PATH
