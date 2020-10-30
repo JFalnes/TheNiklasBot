@@ -53,6 +53,30 @@ list_of_stealing = ['aggressively stolen from', 'willfully given to Niklas by', 
 sub_list = ['memes', 'blackpeopletwitter', 'whitepeopletwitter', 'meirl', 'WholesomeMemes',
             'prequelmemes', 'lotrmemes', 'historymemes', 'comedycemetery', 'comedyheaven']
 
+list_of_ball = ['As I see it, yes', 'Ask again later.', 'Better not tell you now.', ' Cannot predict now.',
+                'Concentrate and ask again.', 'Don’t count on it.', 'It is certain.', 'It is certain.',
+                'It is decidedly so.', 'Most Likely.', 'My reply is no.', 'My sources say no.',
+                'Outlook not so good.', 'Outlook good.', 'Reply hazy, try again.', 'Signs point to yes.',
+                'Very doubtful.', ' Without a doubt.', 'Yes.', 'Yes - definitely', 'You may rely on it.']
+
+
+def eight_answer():
+    response = random.choice(list_of_ball)
+    return ':8ball:, ' + response
+
+
+def week_api():
+    a = requests.get('http://ukenummer.no/json')
+    p = json.loads(a.text)
+    s = json.dumps(p, indent=2, sort_keys=True)
+
+    for k, v in p.items():
+
+        if k == 'weekno':
+            weekno = str(v)
+        if k == 'dates':
+            return f'It is currently week {weekno}, which lasts from {str(v["fromdate"])} to {str(v["todate"])}.'
+
 
 def covid_api():
     a = requests.get('https://api.covid19api.com/summary')
@@ -273,7 +297,6 @@ class Reddit(commands.Cog):
 
     @commands.command(description='Sends a random meme')
     async def meme(self, ctx):
-        print('Works')
         await ctx.send(reddit_meme())
 
 
@@ -284,6 +307,10 @@ class Funny(commands.Cog):
     @commands.command(description='Sends a random joke, uses PyJokes Library')
     async def joke(self, ctx):
         await ctx.send(pyjokes.get_joke())
+
+    @commands.command(description='Helps you with all of lifes questions')
+    async def guidance(self, ctx):
+        await ctx.send(eight_answer())
 
     @commands.command(description='Who is up for a gamble?')
     async def gamble(self, ctx):
@@ -304,6 +331,7 @@ class Funny(commands.Cog):
     @commands.command(description='Displays a random fact!')
     async def facts(self, ctx):
         await ctx.send(facts())
+
 
 class dnd(commands.Cog):
     def __init(self, bot):
@@ -382,22 +410,11 @@ class misc(commands.Cog):
 
     @commands.command()
     async def covid(self, ctx):
-
         await ctx.send(covid_api())
 
     @commands.command()
     async def week(self, ctx):
-        a = requests.get('http://ukenummer.no/json')
-        p = json.loads(a.text)
-        s = json.dumps(p, indent=2, sort_keys=True)
-
-        for k, v in p.items():
-
-            if k == 'weekno':
-                weekno = str(v)
-            if k == 'dates':
-                await ctx.send(
-                    f'It is currently week {weekno}, which lasts from {str(v["fromdate"])} to {str(v["todate"])}.')
+        await ctx.send(week_api())
 
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or("!"),
