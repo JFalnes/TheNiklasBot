@@ -65,6 +65,21 @@ def eight_answer():
     return ':8ball:, ' + response
 
 
+def poke_api(msg):
+    """uses pokepy and pokeapi
+    https://pokeapi.github.io/pokepy/"""
+    try:
+        pokemon_name = pokepy.V2Client().get_pokemon(msg)
+
+        response = f'Name: {pokemon_name.name}\n' \
+                   f'Weight: {pokemon_name.weight}\n' \
+                   f'Type: {pokemon_name.types[0].type.name}'
+        return response
+    except:
+        error_code = f'{msg} IS NOT A POKEMON'
+        return error_code
+
+
 def week_api():
     a = requests.get('http://ukenummer.no/json')
     p = json.loads(a.text)
@@ -303,6 +318,13 @@ class Reddit(commands.Cog):
 class Funny(commands.Cog):
     def __init(self, bot):
         self.bot = bot
+
+    @commands.command()
+    async def pokemon(self, ctx):
+        content = ctx.message.content
+        a = content.split(' ', 1)
+        msg = a[1]
+        await ctx.send(poke_api(msg))
 
     @commands.command(description='Sends a random joke, uses PyJokes Library')
     async def joke(self, ctx):

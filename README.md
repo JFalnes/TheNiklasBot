@@ -10,5 +10,3 @@ All .env variables must be changed to match your installation/tokens/secrets
  et cetera. OR THIS WILL NOT WORK.
  
 Bot should run on both Linux and Windows without problems.
-
-
