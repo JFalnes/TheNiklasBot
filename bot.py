@@ -14,6 +14,7 @@ import discord
 from dotenv import load_dotenv
 from discord.ext import commands
 import praw
+import pokepy
 import pyjokes
 import requests
 import json
