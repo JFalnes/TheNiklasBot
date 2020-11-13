@@ -24,3 +24,6 @@ urllib3==1.25.11
 websocket-client==0.57.0
 yarl==1.6.2
 youtube-dl==2020.9.20
+
+pokepy~=0.6.1
+cryptocompare~=0.7.3
