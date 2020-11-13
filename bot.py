@@ -677,7 +677,8 @@ class Finance(commands.Cog):
         content = ctx.message.content
         a = content.split(' ', 1)
         msg = a[1]
-        await ctx.send(crypto_price(msg))
+        u_msg = msg.upper()
+        await ctx.send(crypto_price(u_msg))
 
 
 class Music(commands.Cog):
