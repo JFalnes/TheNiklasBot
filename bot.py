@@ -22,6 +22,7 @@ import json
 from gtts import gTTS
 
 load_dotenv()
+
 # change these variables in your .env file to point to the right tokens or paths
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
@@ -33,11 +34,15 @@ FFMPEG_PATH = os.getenv('FFMPEG_PATH')
 folder = FOLDER_PATH
 ffmpeg_ex = FFMPEG_PATH
 PREFIX = '!'
-VERSION = '1.0'
-CHANGELOG = f'Version {VERSION} contains multiple bugfixes, QoL changes and some new features:\n' \
-            f'1. !gamble, start a betting match with your friends! \n' \
-            f'2. !clean, for administrators. Keep your discord neat and tidy!\n' \
-            f'As always, every version contains multiple bugfixes to make Niklas work harder to please you'
+VERSION = '1.1'
+CHANGELOG = f':exclamation: :exclamation: Version {VERSION} contains multiple bugfixes, QoL changes and some new ' \
+            f'features:\n' \
+            f':one: !pokemon, get details about your favorite Pokemon! Usage: "!pokemon <Pokemon Number or Name> ' \
+            f':fire: \n' \
+            f':two: !crypto, get the latest prices of all your favorite cryptocurrencies! Usage: !crypto <ticker> ' \
+            f':boom: \n' \
+            f':three: !guidance, Niklas now has an 8 ball feature. Do !guidance for help! :8ball: \n' \
+            f':four: !facts, get a random fact! :nerd: '
 
 bot = commands.Bot(command_prefix='!')
 
@@ -389,6 +394,11 @@ class Dnd(commands.Cog):
     @commands.command(pass_context=True)
     async def d2(self, ctx):
         diceroll = random.randint(1, 2)
+        await ctx.send(diceroll)
+
+    @commands.command()
+    async def d3(self, ctx):
+        diceroll = random.randint(1, 3)
         await ctx.send(diceroll)
 
     @commands.command()
