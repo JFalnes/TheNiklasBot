@@ -391,6 +391,11 @@ class Dnd(commands.Cog):
     def __init(self, bot):
         self.bot = bot
 
+    @commands.command()
+    async def d1(self, ctx):
+        diceroll = random.randint(0, 1)
+        await ctx.send(diceroll)
+
     @commands.command(pass_context=True)
     async def d2(self, ctx):
         diceroll = random.randint(1, 2)
